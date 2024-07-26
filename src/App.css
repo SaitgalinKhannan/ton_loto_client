@@ -1,4 +1,9 @@
-#root {
-  height: 100vh;
-  width: 100vw;
+.header-button {
+    height: 24px;
+    width: 24px;
+}
+
+.header-button-svg {
+    width: 24px;
+    height: 24px;
 }
