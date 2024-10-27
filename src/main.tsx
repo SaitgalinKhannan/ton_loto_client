@@ -5,7 +5,8 @@ import {TonConnectUIProvider} from "@tonconnect/ui-react";
 import {DevSupport} from "@react-buddy/ide-toolbox";
 import {ComponentPreviews, useInitial} from "./dev";
 
-export const API_URL = "https://bc33-80-244-32-198.ngrok-free.app" //"https://tonloto.online:8443"
+//export const API_URL = "http://0.0.0.0:8080" //"https://tonloto.online:8443" "https://9fd1-185-218-125-35.ngrok-free.app"
+export const API_URL = "https://9fd1-185-218-125-35.ngrok-free.app"
 export const ContractAddress = "EQATF1nJayq2dEW7MRL6NS8S5Tq3MLBbENGDHQYURExWMzBX"
 
 ReactDOM.createRoot(document.getElementById('root')!).render(

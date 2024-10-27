@@ -1,20 +1,29 @@
-import {createContext, ReactElement, ReactNode, useEffect, useMemo, useState} from "react";
+import {createContext, ReactElement, ReactNode, SetStateAction, useEffect, useMemo, useState} from "react";
 import {InitData} from "../model/InitData.ts";
-import {tg} from "../components/Main.tsx";
+import {tg} from "../pages/Main.tsx";
 import {checkIsAdmin, connect} from "../api/Connect.ts";
 import {Wallet} from "../model/Wallet.ts";
 import {useTonAddress, useTonWallet} from "@tonconnect/ui-react";
 
 interface LotteryContext {
-    initData: InitData | null
-    isAdmin: boolean,
-    connected: boolean
+    initData: InitData | null;
+    isAdmin: boolean;
+    connected: boolean;
+    tonBalance: number;
+    setTonBalance(balance: SetStateAction<number>): void;
+    usdtBalance: number;
+    notBalance: number;
 }
 
-const LotteryContext = {
+const LotteryContext: LotteryContext = {
     initData: null,
     isAdmin: false,
-    connected: false
+    connected: false,
+    tonBalance: 0.0,
+    setTonBalance(): void {
+    },
+    usdtBalance: 0.0,
+    notBalance: 0.0
 }
 
 export const Context = createContext<LotteryContext>(LotteryContext);
@@ -28,6 +37,11 @@ export default function LotteryProvider({children}: Readonly<{
     const [initData, setInitData] = useState<InitData | null>(null)
     const [isAdmin, setIsAdmin] = useState<boolean>(false);
     const [connected, setConnected] = useState<boolean>(false);
+    const [tonBalance, setTonBalance] = useState<number>(0.0);
+    // @ts-ignore
+    const [usdtBalance, setUsdtBalance] = useState<number>(0.0);
+    // @ts-ignore
+    const [notBalance, setNotBalance] = useState<number>(0.0);
 
     useEffect(() => {
         tg.expand()
@@ -84,8 +98,12 @@ export default function LotteryProvider({children}: Readonly<{
     const obj: LotteryContext = useMemo(() => ({
         initData: initData,
         isAdmin: isAdmin,
-        connected: connected
-    }), [initData, isAdmin, connected]);
+        connected: connected,
+        tonBalance: tonBalance,
+        setTonBalance: setTonBalance,
+        usdtBalance: usdtBalance,
+        notBalance: notBalance
+    }), [initData, isAdmin, connected, tonBalance, usdtBalance, notBalance]);
 
     return (
         <Context.Provider value={obj}>

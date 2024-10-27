@@ -4,7 +4,6 @@ import {
     Sender,
     Address,
     Cell,
-    contractAddress,
     beginCell,
     toNano, Builder
 } from "@ton/core";
@@ -24,40 +23,13 @@ export function storeAdd(src: Add) {
 
 export default class TonLotoContract implements Contract {
 
-    static createForDeploy(code: Cell, initialCounterValue: number): TonLotoContract {
-        const data = beginCell()
-            .storeUint(initialCounterValue, 64)
-            .endCell();
-        const workchain = 0; // deploy to workchain 0
-        const address = contractAddress(workchain, {code, data});
-        return new TonLotoContract(address, {code, data});
-    }
-
     constructor(readonly address: Address, readonly init?: { code: Cell, data: Cell }) {
     }
 
-    async sendDeploy(provider: ContractProvider, via: Sender) {
-        await provider.internal(via, {
-            value: "0.01", // send 0.01 TON to contract for rent
-            bounce: false
-        });
-    }
-
-    async sendIncrement(provider: ContractProvider, via: Sender) {
-        const messageBody = beginCell()
-            .storeUint(1, 32) // op (op #1 = increment)
-            .storeUint(0, 64) // query id
-            .endCell();
-        await provider.internal(via, {
-            value: "0.002", // send 0.002 TON for gas
-            body: messageBody
-        });
-    }
-
-    async sendOneTenthTon(provider: ContractProvider, via: Sender) {
+    async sendFiveTenthTon(provider: ContractProvider, via: Sender) {
         let message: Add = {
             $$type: 'Add',
-            amount: toNano("0.1"),
+            amount: toNano("0.5"),
         }
         let body = beginCell().store(storeAdd(message)).endCell();
         await provider.internal(via, {

@@ -1,9 +1,55 @@
 .header-button {
-    height: 24px;
     width: 24px;
 }
 
 .header-button-svg {
     width: 24px;
     height: 24px;
+    padding: 0;
+}
+
+.balance-text {
+    font-size: 16px;
+    font-weight: bold;
+    color: white;
+    letter-spacing: 0.4em;
+    align-self: center;
+}
+
+.balance-values {
+    font-size: 14px;
+    color: white;
+    letter-spacing: 0.3em;
+    align-self: center;
+}
+
+.cool-button {
+    display: flex;
+    align-items: center;
+    height: 70px;
+    width: 100%;
+}
+
+.circle {
+    width: 70px;
+    height: 100%;
+    border-radius: 50%;
+    background-color: #3498db;
+    border: 1px dashed black;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 1;
+}
+
+.bar {
+    height: 70%;
+    background-color: #3498db;
+    border: 1px dashed black;
+    margin-left: -10px;
+    padding: 0 20px;
+    display: flex;
+    align-items: center;
+    border-top-right-radius: 25%;
+    border-bottom-right-radius: 25%;
 }
