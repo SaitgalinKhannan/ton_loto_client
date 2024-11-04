@@ -1,5 +1,4 @@
 import {Box, Button, Stack, Typography} from "@mui/material";
-import {useTonWallet} from "@tonconnect/ui-react";
 import {useTonContract} from "../hooks/useTonContract.ts";
 import {useContext, useEffect, useState} from "react";
 import {Context} from "../provider/LotteryProvider.tsx";
@@ -7,38 +6,34 @@ import "../App.css"
 import tonIcon from "../assets/ton_symbol.png"
 import ProgressBar from "../components/ProgressBar.tsx";
 import {useNavigate} from "react-router-dom";
-import {useTonClient} from "../hooks/useTonClient.ts";
-import {Address} from "@ton/core";
+import {BigIntFraction, lotteryParticipants, splitBigIntFraction} from "../utils.ts";
+import {CountOfLotteryParticipants} from "../model/CountOfLotteryParticipants.ts";
 
 export const tg = window.Telegram.WebApp;
 
 export function Main() {
-    const wallet = useTonWallet();
     // @ts-ignore
-    const {tonLotoContract, sender} = useTonContract();
-    const tonClient = useTonClient();
+    const {tonLotteryContract, sender} = useTonContract();
     // @ts-ignore
-    const {initData, isAdmin, connected, tonBalance, usdtBalance, notBalance} = useContext(Context)
+    const {initData, isAdmin, connected, tonBalance, setTonBalance, usdtBalance, notBalance} = useContext(Context)
     // @ts-ignore
-    const [accountBalance, setAccountBalance] = useState<bigint | null>();
+    const [lotteryParticipantsCount, setLotteryParticipantsCount] = useState<CountOfLotteryParticipants>({
+        oneTenthTon: 0,
+        halfTon: 0,
+        oneTon: 0
+    });
     const navigate = useNavigate();
+    const [balanceOnTon, setBalanceOnTon] = useState<BigIntFraction>({integerPart: "0", fractionalPart: "0"})
 
     useEffect(() => {
-        console.log(isAdmin)
-    }, [isAdmin]);
+        lotteryParticipants()
+            .then(r => setLotteryParticipantsCount(r))
+            .catch(e => console.log(e));
+    }, []);
 
     useEffect(() => {
-        if (tonClient && wallet?.account.address) {
-            tonClient.getContractState(Address.parse(wallet?.account.address))
-                .then(r => setAccountBalance(r.balance))
-        }
-    }, [tonClient]);
-
-    useEffect(() => {
-        if (wallet) {
-            wallet.account.address
-        }
-    }, [wallet]);
+        setBalanceOnTon(splitBigIntFraction(tonBalance));
+    }, [tonBalance]);
 
     return (
         <Box
@@ -100,8 +95,8 @@ export function Main() {
                     </Typography>
                     <Typography fontSize={"18px"} fontWeight={"bold"} letterSpacing="0.2em" fontFamily="monospace">
                         <span style={{color: "#ecffff"}}>TON:&nbsp;&nbsp;</span>
-                        <span style={{color: "#ecffff"}}>{Math.floor(tonBalance)}</span>
-                        <span style={{color: "#9fc0fd"}}>{(tonBalance % 1).toFixed(5).substring(1)}</span>
+                        <span style={{color: "#ecffff"}}>{balanceOnTon.integerPart}.</span>
+                        <span style={{color: "#9fc0fd"}}>{balanceOnTon.fractionalPart}</span>
                     </Typography>
                     <Typography fontSize={"18px"} fontWeight={"bold"} letterSpacing="0.2em" fontFamily="monospace">
                         <span style={{color: "#ecffff"}}>USDT:&nbsp;</span>
@@ -143,21 +138,21 @@ export function Main() {
                                 <img src={tonIcon} width={50} height={50} alt="ton icon"/>
                                 <Stack direction="column" width={"100%"} alignItems="center">
                                     <Typography fontSize={"20px"} fontWeight={"bold"} color={"black"}>
+                                        0.1
+                                    </Typography>
+                                    <ProgressBar current={lotteryParticipantsCount.oneTenthTon} total={100}/>
+                                </Stack>
+                                <Stack direction="column" width={"100%"} alignItems="center">
+                                    <Typography fontSize={"20px"} fontWeight={"bold"} color={"black"}>
                                         0.5
                                     </Typography>
-                                    <ProgressBar current={25} total={100}/>
+                                    <ProgressBar current={lotteryParticipantsCount.halfTon} total={100}/>
                                 </Stack>
                                 <Stack direction="column" width={"100%"} alignItems="center">
                                     <Typography fontSize={"20px"} fontWeight={"bold"} color={"black"}>
                                         1
                                     </Typography>
-                                    <ProgressBar current={50} total={100}/>
-                                </Stack>
-                                <Stack direction="column" width={"100%"} alignItems="center">
-                                    <Typography fontSize={"20px"} fontWeight={"bold"} color={"black"}>
-                                        5
-                                    </Typography>
-                                    <ProgressBar current={25} total={100}/>
+                                    <ProgressBar current={lotteryParticipantsCount.oneTon} total={100}/>
                                 </Stack>
                             </Stack>
                         </Button>

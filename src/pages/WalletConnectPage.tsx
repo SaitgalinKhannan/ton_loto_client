@@ -13,7 +13,7 @@ export default function WalletConnectPage() {
     // @ts-ignore
     const wallet = useTonWallet();
     // @ts-ignore
-    const {tonLotoContract, sender} = useTonContract();
+    const {tonLotteryContract, sender} = useTonContract();
     // @ts-ignore
     const {initData, isAdmin, connected, tonBalance, usdtBalance, notBalance} = useContext(Context)
 

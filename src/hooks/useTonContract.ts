@@ -1,8 +1,8 @@
-import TonLotoContract from '../contract/TonLotoContract';
+import TonLotteryContract from '../contract/TonLotteryContract.ts';
 import {useTonClient} from './useTonClient';
 import {useAsyncInitialize} from './useAsyncInitialize';
 import {Address, OpenedContract} from '@ton/core';
-import {useContext, useEffect} from "react";
+import {useContext} from "react";
 import {useTonConnect} from "./useTonConnect.ts";
 import {ContractAddress} from "../main.tsx";
 import {Context} from "../provider/LotteryProvider.tsx";
@@ -13,18 +13,14 @@ export function useTonContract() {
     const { sender } = useTonConnect();
     const lotteryContext = useContext(Context);
 
-    const tonLotoContract = useAsyncInitialize(async () => {
+    const tonLotteryContract = useAsyncInitialize(async () => {
         if (!client) return;
-        const contract = new TonLotoContract(address);
-        return client.open(contract) as OpenedContract<TonLotoContract>;
+        const contract = new TonLotteryContract(address);
+        return client.open(contract) as OpenedContract<TonLotteryContract>;
     }, [client, lotteryContext]);
 
-    useEffect(() => {
-
-    }, [tonLotoContract]);
-
     return {
-        tonLotoContract,
-        sender
+        tonLotteryContract: tonLotteryContract,
+        sender: sender
     };
 }

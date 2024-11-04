@@ -1,16 +1,18 @@
-import {createContext, ReactElement, ReactNode, SetStateAction, useEffect, useMemo, useState} from "react";
+import {createContext, ReactElement, ReactNode, useEffect, useMemo, useState} from "react";
 import {InitData} from "../model/InitData.ts";
 import {tg} from "../pages/Main.tsx";
 import {checkIsAdmin, connect} from "../api/Connect.ts";
 import {Wallet} from "../model/Wallet.ts";
 import {useTonAddress, useTonWallet} from "@tonconnect/ui-react";
+import {Address} from "@ton/core";
+import {useTonClient} from "../hooks/useTonClient.ts";
 
 interface LotteryContext {
     initData: InitData | null;
     isAdmin: boolean;
     connected: boolean;
-    tonBalance: number;
-    setTonBalance(balance: SetStateAction<number>): void;
+    tonBalance: bigint;
+    setTonBalance(balance: bigint): void;
     usdtBalance: number;
     notBalance: number;
 }
@@ -19,7 +21,7 @@ const LotteryContext: LotteryContext = {
     initData: null,
     isAdmin: false,
     connected: false,
-    tonBalance: 0.0,
+    tonBalance: BigInt(0),
     setTonBalance(): void {
     },
     usdtBalance: 0.0,
@@ -37,11 +39,12 @@ export default function LotteryProvider({children}: Readonly<{
     const [initData, setInitData] = useState<InitData | null>(null)
     const [isAdmin, setIsAdmin] = useState<boolean>(false);
     const [connected, setConnected] = useState<boolean>(false);
-    const [tonBalance, setTonBalance] = useState<number>(0.0);
+    const [tonBalance, setTonBalance] = useState<bigint>(BigInt(0));
     // @ts-ignore
     const [usdtBalance, setUsdtBalance] = useState<number>(0.0);
     // @ts-ignore
     const [notBalance, setNotBalance] = useState<number>(0.0);
+    const tonClient = useTonClient();
 
     useEffect(() => {
         tg.expand()
@@ -72,6 +75,14 @@ export default function LotteryProvider({children}: Readonly<{
         }
         console.log(initData)
     }, [initData]);
+
+    useEffect(() => {
+        if (tonClient && wallet?.account.address) {
+            tonClient.getContractState(Address.parse(wallet?.account.address))
+                .then(r => setTonBalance(r.balance))
+                .catch(e => console.error(e));
+        }
+    }, [tonClient, wallet]);
 
     useEffect(() => {
         console.log(userFriendlyAddress)

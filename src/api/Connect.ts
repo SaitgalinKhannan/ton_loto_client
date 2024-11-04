@@ -2,6 +2,7 @@ import axios, {AxiosResponse} from 'axios';
 import {API_URL} from "../main.tsx";
 import {Wallet} from "../model/Wallet.ts";
 import {Transaction} from "../model/Transaction.ts";
+import {Lottery} from "../model/Lottery.ts";
 
 export async function connect(wallet: Wallet): Promise<boolean> {
     const response: AxiosResponse<boolean> = await axios.post(`${API_URL}/connect`, JSON.stringify(wallet), {
@@ -38,3 +39,18 @@ export async function sendTransaction(transaction: Transaction): Promise<boolean
     });
     return response.data;
 }
+
+export async function lotteryParticipantsCount(lottery: Lottery): Promise<number> {
+    return axios
+        .get<number>(`${API_URL}/counter/${lottery}`, {
+            headers: {
+                'Content-Type': 'application/json',
+            },
+        })
+        .then(response => response.data)
+        .catch(e => {
+            console.error(e);
+            return 0;
+        });
+}
+

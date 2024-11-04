@@ -2,8 +2,9 @@ import './App.css'
 import {Main} from "./pages/Main.tsx";
 import LotteryProvider from "./provider/LotteryProvider.tsx";
 import {createBrowserRouter, RouterProvider} from "react-router-dom";
-import TonLoto from "./pages/TonLotoPage.tsx";
+import TonLottery from "./pages/TonLotoPage.tsx";
 import WalletConnectPage from "./pages/WalletConnectPage.tsx";
+import HoldTonLottery from "./pages/HoldTonLottery.tsx";
 
 const router = createBrowserRouter([
     {
@@ -11,10 +12,13 @@ const router = createBrowserRouter([
         element: <Main/>,
     }, {
         path: "/ton",
-        element: <TonLoto/>
+        element: <TonLottery/>
     }, {
         path: "/wallet",
         element: <WalletConnectPage/>
+    }, {
+        path: "/ton/admin",
+        element: <HoldTonLottery/>
     }
 ]);
 
